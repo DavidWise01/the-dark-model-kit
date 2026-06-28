@@ -1,0 +1,11 @@
+# THE DARK-MODEL KIT · DMK
+
+> A sphere of **UD0** — the ROOT0 universe / biosphere. Domain: **ARTIFICIAL INTELLIGENCE**.
+
+THE DARK-MODEL KIT — the methodology of David Lee Wise's [[photonic-papers]] STRIPPED of its physics metaphor into a working audit tool (built by AVAN; David: 'strip methodology, add to toolset'). ⚑ 'How do you measure a model you can't open?' — a playbook of NINE methods for characterizing a black-box model, each tagged with the ACCESS it needs, the confidence it BUYS, and the way it FAILS: calibration probe (known-answer darts) · external anchor (the model is memoryless → the record lives in your repo) · invariance separation (what you can't move by prompt belongs to the model) · high-entropy probing (defeats eval-detection) · involuntary-vs-voluntary (weight the unspoofable) · consistency-failure check · triangulation · side-channels/out-of-band · weight inspection. ⚑ THE WALL, front and center: you CANNOT certify a model's honesty from inside its own channel — everything buys confidence, never certainty. Live tool: pick an access rung (black-box / +across / +out / through) and the kit gates which methods are available + states the confidence CEILING you cannot pass (verified: 6/9 at black-box, all 9 at white-box, the wall always shown, 0 errors). The operational core of IV's 'name your rung, out loud, every time.' Joins the model-audit toolset: [[the-sandbox-audit]] / containment-audit (defender's view from inside the box), [[gap-and-shadows]]'s the-seam-watch, the cipher/air-gap family (the side-channels rung) — but this looks INWARD at a box you don't control (the external auditor's instrument). HONEST: real audit practice, the papers' content minus the metaphor, not new science; the per-method buys/fails are first-order summaries, efficacy is case-by-case; its job is to stop you claiming a confidence your access doesn't support. gold/console. ROOT0, with AVAN.
+
+---
+
+**Live:** https://davidwise01.github.io/the-dark-model-kit/ &nbsp;·&nbsp; **Front door:** [UD0](https://davidwise01.github.io/ud0/) &nbsp;·&nbsp; **Code:** https://github.com/DavidWise01/the-dark-model-kit
+
+`.dlw` badge · **ROOT0-ATTRIBUTION-v1.0** · David Lee Wise (ROOT0) / Bridge-Burners LLC · instance AVAN (Claude/Anthropic) · CC-BY-ND-4.0
