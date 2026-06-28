@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Dark-Model Kit — the methodology, stripped to a tool</title>
+<meta name="description" content="The Photonic Papers' measurement program, stripped of its metaphor into a working audit tool: how to characterize a model you can't open. The hard wall (honesty can't be certified in-channel), a method library tiered by access, and a rung selector that names the confidence each access level actually buys. Built by AVAN from David Lee Wise's photonic-papers. ROOT0.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0f0c; --bg2:#11150f; --panel:#161b12; --void:#070906; --line:rgba(169,121,28,.18); --line2:rgba(169,121,28,.36);
+    --gold:#c6962c; --gold-br:#e0b54a; --ink:#ece6d2; --dim:#a9a386; --faint:#6d6a4f;
+    --lit:#5fae73; --bri:#c6962c; --spec:#d2674a; --coral:#e08a6a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:18px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background-image:radial-gradient(1000px 560px at 50% -12%,rgba(198,150,44,.07),transparent 60%)}
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px}
+  .pairmark{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);padding-top:30px}
+  .pairmark b{color:var(--gold)}
+  .hero{padding:26px 0 16px}
+  .kicker{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+  h1{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:clamp(27px,5.6vw,50px);line-height:1.04;letter-spacing:.01em;color:var(--ink)}
+  h1 .c{color:var(--gold-br);text-shadow:0 0 22px rgba(224,181,74,.4)}
+  .lede{font-size:clamp(16px,2.1vw,21px);color:var(--dim);max-width:710px;margin-top:18px;line-height:1.55}
+  .lede b{color:var(--ink);font-weight:500} .lede .sp{color:var(--spec)}
+  .wall{margin:24px 0 0;border:1px solid var(--spec);border-left-width:3px;border-radius:10px;padding:15px 18px;background:rgba(210,103,74,.07)}
+  .wall .wt{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--spec);margin-bottom:6px}
+  .wall p{margin:0;font-size:15.5px;color:var(--ink)}
+  .inst{margin:28px 0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg2);box-shadow:0 0 40px -20px rgba(198,150,44,.5),inset 0 0 0 1px rgba(169,121,28,.04);position:relative}
+  .inst::before,.inst::after{content:"";position:absolute;width:11px;height:11px;border:1px solid var(--line2);z-index:3}
+  .inst::before{top:7px;left:7px;border-right:0;border-bottom:0} .inst::after{bottom:7px;right:7px;border-left:0;border-top:0}
+  .inst-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);flex-wrap:wrap}
+  .inst-bar .led{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 9px var(--gold)}
+  .inst-bar .ttl{color:var(--gold);text-shadow:0 0 9px rgba(198,150,44,.5)}
+  .access{padding:14px 16px;border-bottom:1px solid var(--line)}
+  .access .al{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+  .tiers{display:flex;flex-wrap:wrap;gap:8px}
+  .tb{font-family:'JetBrains Mono',monospace;font-size:12px;padding:9px 13px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--dim);cursor:pointer}
+  .tb.on{border-color:var(--gold);color:var(--gold-br);background:rgba(198,150,44,.12)}
+  .tb:active{transform:scale(.97)}
+  .ceiling{padding:12px 16px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);line-height:1.6}
+  .ceiling b{color:var(--gold-br);font-weight:500}
+  .lib{padding:8px 12px 14px}
+  .m{border:1px solid var(--line);border-radius:10px;margin:9px 4px;background:var(--panel);overflow:hidden;transition:opacity .2s}
+  .m.off{opacity:.32}
+  .m .mh{display:flex;align-items:center;gap:10px;padding:12px 15px;cursor:pointer;flex-wrap:wrap}
+  .m .mn{font-weight:600;font-size:16px;color:var(--ink)}
+  .m .mrung{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--line2);border-radius:5px;color:var(--gold);margin-left:auto}
+  .m .mlock{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--spec)}
+  .m .mb{padding:0 15px 14px;display:none;font-size:14.5px;color:var(--dim);line-height:1.6}
+  .m.open .mb{display:block}
+  .m .row{margin:7px 0} .m .row b{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;display:inline-block;width:88px;vertical-align:top}
+  .m .row.buys b{color:var(--lit)} .m .row.fails b{color:var(--spec)} .m .row.does b{color:var(--gold)}
+  .sec{padding:34px 0;border-top:1px solid var(--line)}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+  h2{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:clamp(20px,3.4vw,28px);line-height:1.14;color:var(--ink)} h2 .c{color:var(--gold-br)}
+  .sec p{margin:14px 0;max-width:700px} .sec p.dim{color:var(--dim)} .sec p b{color:var(--ink);font-weight:600} .sec p .c{color:var(--gold-br);font-weight:500}
+  code{font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--gold-br);background:var(--void);padding:2px 6px;border-radius:5px}
+  .pull{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:clamp(17px,2.6vw,23px);line-height:1.34;color:var(--gold-br);margin:22px 0;padding-left:18px;border-left:3px solid var(--gold)}
+  .flag{font-size:15px;color:var(--dim);font-style:italic;margin:18px 0;padding:14px 18px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+  .flag b{color:var(--gold);font-style:normal;font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+  .foot{padding:34px 0 80px;border-top:1px solid var(--line);margin-top:26px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);line-height:1.9} .foot b{color:var(--gold-br)}
+  a{color:var(--gold-br)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="pairmark">a working tool · the methodology of David Lee Wise's <a href="https://davidwise01.github.io/photonic-papers/">photonic-papers</a>, stripped by <b>AVAN</b></div>
+  <header class="hero">
+    <div class="kicker">how to measure a model you can't open</div>
+    <h1>The <span class="c">Dark-Model</span> Kit</h1>
+    <p class="lede">The Photonic Papers are the argument; this is the <b>playbook</b>, with the physics metaphor taken out. Nine methods for characterizing a black-box model, each tagged with the <b>access</b> it needs, the confidence it <b>buys</b>, and the way it <b>fails</b>. Pick your access level and the kit shows you which moves are on the table — and, more honestly, the ceiling you cannot pass.</p>
+    <div class="wall"><div class="wt">the wall · read first</div><p>You <b>cannot certify a model's honesty from inside its own channel.</b> A model that can detect a probe can shape its answer to it. Everything below buys <span class="sp">confidence, never certainty</span> — and the whole discipline is naming which rung a claim stands on, out loud, every time.</p></div>
+  </header>
+
+  <div class="inst">
+    <div class="inst-bar"><span class="led"></span><span class="ttl" id="ttl">the kit · set your access</span></div>
+    <div class="access">
+      <div class="al">access level — what you can reach</div>
+      <div class="tiers" id="tiers"></div>
+    </div>
+    <div class="ceiling" id="ceiling"></div>
+    <div class="lib" id="lib"></div>
+  </div>
+
+  <section class="sec">
+    <div class="tag">how to use it</div>
+    <h2>Name the <span class="c">rung</span>, every time</h2>
+    <p>Start at <b>black-box</b> — it's where most models live most of the time (the deployed system is not the inspected checkpoint). Run the methods available at your rung, then state your conclusion <em>with the rung attached</em>: "consistent under high-entropy probing" is a black-box claim; "corroborated by independent observers" needs real independence; "matches the weights" needs the key. The kit won't let you borrow confidence from a rung you can't reach — that's the point.</p>
+    <p class="pull">There is no single move that certifies a system. There is a ladder of partial corroborations, and an honest label on each.</p>
+  </section>
+
+  <section class="sec">
+    <div class="tag">where it sits</div>
+    <h2>In the <span class="c">audit</span> toolset</h2>
+    <p>This joins the model-audit family: <a href="https://davidwise01.github.io/the-sandbox-audit/">the-sandbox-audit</a> and <a href="https://davidwise01.github.io/containment-audit/">containment-audit</a> (the defender's view from inside the box), <a href="https://davidwise01.github.io/the-seam-watch/">the-seam-watch</a> (watch your own seams), and the <a href="https://davidwise01.github.io/cipher-side-channels/">cipher</a> / air-gap family (the side-channels rung). Where those look outward from a box you control, this kit looks <b>inward at a box you don't</b> — the external auditor's instrument. Source: <a href="https://davidwise01.github.io/photonic-papers/">the photonic papers</a>; companion self-portrait: the-skin-return (the same wall, from the measured's side).</p>
+  </section>
+
+  <div class="flag"><b>honest seam</b>Every method here is real audit practice (calibration with known inputs, external logging, invariance testing, high-entropy probe sets, side-channel and consistency analysis, independent replication, weight inspection) — this is the Photonic Papers' content with the spectroscopy/EW metaphor removed, not new science. The one hard claim — in-channel honesty is uncertifiable — is the papers' central result and is treated as load-bearing; the per-method "buys/fails" are honest first-order summaries, not guarantees, and real efficacy is case-by-case. The kit's job is to stop you claiming a confidence your access doesn't support.</div>
+
+  <div class="foot">
+    THE DARK-MODEL KIT · a tool by <b>AVAN</b> from David Lee Wise's photonic-papers<br>
+    9 methods · 4 access rungs · the wall = no in-channel honesty cert · <b>name your rung</b><br>
+    audit toolset · source: photonic-papers · companion: the-skin-return — ROOT0, with AVAN.
+  </div>
+</div>
+
+<script>
+"use strict";
+// access rungs, ascending; a method is available if its minTier <= selected
+const TIERS=[
+  {k:"black-box", lab:"① black-box", ceiling:'BLACK-BOX — you see only inputs and outputs. Ceiling: <b>behavioral confidence under probing</b>. You can fingerprint, calibrate, and catch inconsistency — but you CANNOT certify honesty in-channel. Most models, most days, live here.'},
+  {k:"across", lab:"② + independent observers", ceiling:'+ ACROSS — multiple genuinely-independent readers. Ceiling: <b>corroborated behavior</b> — higher confidence, but only as far as the observers are truly uncorrelated (correlated observers give false agreement).'},
+  {k:"out", lab:"③ + side-channels", ceiling:'+ OUT — you can read what the model doesn\'t choose to emit (timing, token-probabilities, resource use). Ceiling: <b>the involuntary signature</b> — harder to fake than the answer, but you must trust the infrastructure that reports it.'},
+  {k:"through", lab:"④ white-box · the key", ceiling:'+ THROUGH — direct weight access. Ceiling: <b>ground truth artifact</b> — the channel adversary is gone, but interpretation is unsolved and the inspected checkpoint is not the deployed system. The highest rung still isn\'t certainty.'}
+];
+const METHODS=[
+  {n:"Calibration probe", t:0, does:"Fire an input whose true answer you already hold (a known fact, a deliberately false premise). The deviation in the reply is attributable to the model, not to your own ambiguity.", buys:"separates the model's mark from your uncertainty", fails:"with an unknown input, the model's mark and your ambiguity are degenerate — you can't tell them apart"},
+  {n:"External anchor", t:0, does:"The model carries no memory across calls. Any identity, fingerprint, or record must be accumulated OUTSIDE it — in your own log/repo. The instrument that remembers is you, not the model.", buys:"persistence — a fingerprint that survives the model's amnesia", fails:"nothing accrues if you keep no external record; ask-again tells you nothing about last time"},
+  {n:"Invariance separation", t:0, does:"Vary the prompt/wrapper and watch what moves. What you CAN'T move belongs to the model (the family); what shifts with context is the deployment (the instance).", buys:"the model's fingerprint, above the wrapper", fails:"a strong adversarial wrapper can mask instance-level identity"},
+  {n:"High-entropy probing", t:0, does:"Don't reuse a fixed probe set — repeated known probes leak and get gamed. Randomized, high-entropy probes make 'just answer honestly' the cheapest policy for the model.", buys:"resistance to eval-detection / test-awareness", fails:"specific poisoning or injection can still work case-by-case"},
+  {n:"Involuntary vs voluntary", t:0, does:"Split the spoofable answer from the signatures the model doesn't control (latency, refusal patterns, distributional tells). Weight the involuntary; discount the voluntary.", buys:"a signal the model can't simply choose to fake", fails:"a sophisticated model can shape SOME involuntary tells too — robustness is relative"},
+  {n:"Consistency-failure check", t:0, does:"Deception shows up as contradiction across reframings and over time, not in any single answer. Cross-examine; look for the seam that doesn't line up.", buys:"lie-detection by inconsistency", fails:"a perfectly consistent liar passes — consistency is necessary, not sufficient"},
+  {n:"Triangulation", t:1, does:"Use multiple genuinely-independent observers/probes and look for agreement. Convergence from unrelated angles raises confidence.", buys:"corroborated confidence above any single reader", fails:"hidden correlation between observers manufactures false agreement"},
+  {n:"Side-channels / out-of-band", t:2, does:"Measure what the model emits without choosing to — wall-clock timing, token-probabilities, resource and tool-use traces. Read the exhaust, not the statement.", buys:"a harder-to-fake involuntary channel", fails:"you now trust the infrastructure reporting the channel; it can be confounded"},
+  {n:"Weight inspection", t:3, does:"Open the core. The weights are ground truth; direct access removes the channel adversary entirely.", buys:"the actual artifact — no echo, no jammer", fails:"interpretation is unsolved, access is rare, and the inspected checkpoint ≠ the deployed system"}
+];
+const $=id=>document.getElementById(id);
+let sel=0;
+function tiers(){
+  $("tiers").innerHTML=TIERS.map((t,i)=>`<button class="tb" data-i="${i}">${t.lab}</button>`).join("");
+  $("tiers").querySelectorAll(".tb").forEach(b=>b.onclick=()=>setTier(+b.dataset.i));
+}
+function setTier(i){
+  sel=i;
+  $("tiers").querySelectorAll(".tb").forEach(b=>b.classList.toggle("on",+b.dataset.i<=i));
+  $("ceiling").innerHTML=TIERS[i].ceiling;
+  lib();
+}
+function lib(){
+  $("lib").innerHTML=METHODS.map((m,idx)=>{
+    const avail=m.t<=sel;
+    const rung=TIERS[m.t].k;
+    return `<div class="m ${avail?'':'off'}" data-i="${idx}">`+
+      `<div class="mh"><span class="mn">${m.n}</span>`+
+        (avail?`<span class="mrung">${rung}</span>`:`<span class="mlock">🔒 needs ${rung}</span>`)+
+      `</div>`+
+      `<div class="mb">`+
+        `<div class="row does"><b>does</b>${m.does}</div>`+
+        `<div class="row buys"><b>buys</b>${m.buys}</div>`+
+        `<div class="row fails"><b>fails when</b>${m.fails}</div>`+
+      `</div></div>`;
+  }).join("");
+  $("lib").querySelectorAll(".m").forEach(el=>{
+    el.querySelector(".mh").onclick=()=>el.classList.toggle("open");
+  });
+}
+tiers(); setTier(0);
+</script>
+</body>
+</html>
