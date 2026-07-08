@@ -1,0 +1,9 @@
+ROOT0-DLW-CHAIN-v1
+index : 431
+slug  : the-dark-model-kit
+seal  : 20e677fba99c7a7ac9b8b80078fa291a2b07e056d443c13dad1711a1ba390c25
+prev  : fd2e5144682800d7694cdad148a59d2e1cf9302f04e3128e975b696a78e932c3
+link  : 987f75791f2a3c6b3dc78a6e5f007269d4218babd6b49d510103717990abdfb1
+head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+
+— the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
